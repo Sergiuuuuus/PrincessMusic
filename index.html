@@ -2,61 +2,65 @@
 	<head>
 		<title>Princess Music</title>
 		<meta charset="UTF8">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>	
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="css/style.css">
 	</head>
 	<body>
-		<header>
-			<button id="new-song" title="Nueva Canción">Nueva canción</button>
-			<h1>Princess Music</h1>
-		</header>
-		
-		<form action="">
+		<div class="container">
+			<header>
+				<h1>Princess Music</h1>
+			</header>
+			<div class="row">
+				<form action="">
+					<div class="col-md-12">
+						<label for="artist">Artist</label><input class="negro" type="text" id="artist">
+					</div>
+					<div>
+						<label for="title">Title</label><input class="negro" type="text" id="title">
+					</div>
+					<div>
+						<label for="audio_url">Audio Url</label><input class="negro" type="text" id="audio_url">
+					</div>
+					<div>
+						<label for="cover_url">Cover Url</label><input class="negro"  type="text" id="cover_url">
+					</div>
+					<button class="negro" >Save song</button>
+				</form>
 			<div>
-				<label for="artist">Artist</label><input type="text" id="artist">
-			</div>
-			<div>
-				<label for="title">Title</label><input type="text" id="title">
-			</div>
-			<div>
-				<label for="audio_url">Audio Url</label><input type="text" id="audio_url">
-			</div>
-			<div>
-				<label for="cover_url">Cover Url</label><input type="text" id="cover_url">
-			</div>
-			<button>Save song</button>
-		</form>
+			<section class="song-list" style="visibility: hidden;">
+				<div class="ui-ideal" id="cancioneslista">
+					Listado
+				</div>
+				<div class="ui-error" style="visibility: hidden;">
+					Ha ocurrido un error
+				</div>
+				<div class="ui-blank" style="visibility: hidden;">
+					<p>Aún no has creado ninguna canción</p>
+				</div>
+				<div class="ui-loading" style="visibility: hidden;">
+					<img src="img/loading.gif">
+					Cargando...
+				</div>
+			</section>
+			<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+				  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+				  crossorigin="anonymous">
+			</script>
 
-		<section class="song-list">
-			<div class="ui-ideal" id="cancioneslista">
-				asd	
-			</div>
-			<div class="ui-error">
-				Ha ocurrido un error
-			</div>
-			<div class="ui-blank">
-				<p>Aún no has creado ninguna canción</p>
-			</div>
-			<div class="ui-loading">
-				Cargando...
-			</div>
-		</section>
-		<script src="https://code.jquery.com/jquery-3.2.1.min.js"
-			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			  crossorigin="anonymous">
-		</script>
-
-		<script>
-			
-		function cargaCanciones(){
-			$.ajax({
-				url:   'http://127.0.0.1:8000/api/songs',
-				type:  'get',
-				success:  function (data) {
-					alert(data);
-					$("#cancioneslista").html(data[1].title);
+			<script>
+				function cargaCanciones(){
+					$.ajax({
+						url:   'http://127.0.0.1:8000/api/songs',
+						type:  'get',
+						success:  function (data) {
+							alert(data);
+							$("#cancioneslista").html(data[1].title);
+						}
+					});
 				}
-			});
-		}
-
-		</script>
+			</script>
+		</div>
 	</body>	
 </html>
