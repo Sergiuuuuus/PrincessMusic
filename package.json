@@ -1,0 +1,33 @@
+{
+  "name": "princessmusic",
+  "version": "1.0.0",
+  "description": "aplicación de música",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sergiuuuuus/PrincessMusic.git"
+  },
+  "keywords": [
+    "front",
+    "end",
+    "api",
+    "rest",
+    "responsive",
+    "web",
+    "design"
+  ],
+  "author": "Sergio Luzón",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sergiuuuuus/PrincessMusic/issues"
+  },
+  "homepage": "https://github.com/Sergiuuuuus/PrincessMusic#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-notify": "^3.0.0",
+    "gulp-sass": "^3.1.0"
+  }
+}

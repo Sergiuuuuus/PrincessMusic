@@ -1,0 +1,9 @@
+@import "variables";
+
+
+div{
+	background-color:$sunset-orange;
+	&:hover{
+		background-color:$mustard;
+	}
+}
