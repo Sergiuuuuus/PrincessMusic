@@ -1,0 +1,475 @@
+Introducción
+Gulp es una herramienta de automatización de tareas escrito en Muy extendido entre el mundo del desarrollo web front-end para
+•
+JavaScript. 
+•
+automatizar tareas de todo tipo. 
+Utiliza streams de datos (datos en memoria), lo que hace que
+•
+funcione muy rápido.
+
+
+Instalando Gulp
+
+1. Instalar la CLI de Gulp en el sistema
+
+Desde la consola de Windows:
+$ npm install -g gulp-cli
+
+Desde la consola de macOS o Linux:
+
+$ sudo npm install -g gulp-cli
+Esto instala la Command Line Interface de Gulp en el sistema. Debemos tener instalado NodeJS.
+
+
+2. Inicializamos un paquete npm
+En la carpeta de nuestro proyecto:
+$ npm init
+Esto nos preguntará información sobre nuestro proyecto para crear un archivo package.json con toda la información y donde almacenaremos las dependencias de nuestro proyecto.
+
+
+3. Instalar Gulp en nuestro proyecto
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp
+Instala Gulp en nuestro proyecto y lo guarda en el   package.json como dependencia de desarrollo (--save-dev)
+
+
+4. Crear el gulpfile.js
+En la carpeta de nuestro proyecto:
+$ touch gulpfile.js
+La configuración de Gulp, se almacena en un archivo especial llamado gulpfile.js
+
+
+5. Definir una tarea en el gulpfile.js
+En gulpfile.js:
+var gulp = require(‘gulp’); // Importa gulp 
+gulp.task(“default”, function(){
+console.log(“Hello World”);
+});
+Definirmos la tarea por defecto “default” que hace un “Hello World”
+
+
+6. Ejecutar gulp
+Con la consola en la carpeta de nuestro proyecto:
+$ gulp
+Esto nos ejecutará la tarea por defecto y mostrará “Hello world”
+
+
+Cómo funciona Gulp
+En gulp definimos tareas y en cada tarea un flujo de operaciones.
+
+
+Definir una tarea con gulp.task
+// tarea por defecto que se ejecuta con: gulp
+gulp.task(“default”, function(){
+...
+}); 
+// esta tarea se ejecuta con gulp compile-sass gulp.task(“compile-sass”, function(){
+... });
+
+
+Una tarea puede disparar varias tareas
+gulp.task(“task1”, function(){ ... }); gulp.task(“task2”, function(){ ... }); gulp.task(“task3”, function(){ ... }); 
+// Ejecuta las tareas: task1, task2 y task3
+gulp.task(“all”, [“task1”, “task2”, “task3”]);
+
+
+O puede depender de otra tarea antes
+// Ejecuta las tarea compile-sass antes
+gulp.task(“css-lint”, [“compile-sass”], function(){
+...
+});
+
+
+Flujo de una tarea
+Leer archivos
+Realizar operaciones con los archivos
+Guardar el resultado
+gulp.src(“...”)
+.pipe()
+.pipe(  gulp.dest(“...”)  )
+
+
+Ejemplo
+var gulp = require('gulp'),
+concat = require('gulp-concat');
+gulp.task('concat-js', function () {
+gulp.src(‘js/*.js')  // todos los archivos JavaScript
+.pipe(concat(‘todo.js'))  // se concatenan en un archivo todo.js
+.pipe(gulp.dest(‘js/build/'))  // y se guarda en la carpeta /js/build
+});
+
+
+gulp.watch
+The observer
+
+
+Ejemplo
+gulp.task(‘develop', function () {
+// Cada vez que un archivo javascript cabe
+// ejecuta la tarea concat-js
+gulp.watch(‘js/*.js’, [“concat-js"])
+});
+watch observa cambios en los archivos que le indicamos y cuando detecta un cambio ejecuta la tarea que le indicamos inmediatamente.
+
+
+Compilando
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-sass
+Es necesario tener instalada la dependencia gulp-ruby-sass
+
+
+Compilando SASS al vuelo
+var gulp = require(“gulp”),
+sass = require(“gulp-sass”);
+gulp.task(“compile-sass”, function(){ .gulp.src(“./sass/style.scss”)
+.pipe(sass().on(“error”, sass.logError)) // compila style.scss .pipe(gulp.dest(“./css/")) // y el resultado lo dejas en /css/
+});
+var sassDirs = [“./sass/*.scss”, “./sass/**/*.scss”]
+gulp.task(“default”, function(){
+// Observamos cambios en cualquier archivo SASS 
+// y cuando cambie alguno, lanzamos la tarea de compilación gulp.watch(sassDirs, [“compile-sass”]);
+
+
+Notifications
+Olvídate de mirar la consola: muestra notificaciones en el escritorio
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-notify
+Es necesario tener instalada la dependencia gulp-notify
+
+
+Notificando minificación de CSS
+var gulp = require(“gulp”),
+sass = require(“gulp-ruby-sass”), postcss = require(“gulp-postcss”), cssnano = require(“cssnano”),
+sourcemaps = require(“gulp-sourcemaps”), notify = require(“gulp-notify”);
+gulp.task(“cssmin”, function(){
+gulp.src(“./css/style.css”)
+.pipe(sourcemaps.init())
+.pipe(postcss([cssnano()]))
+.pipe(sourcemaps.write())
+.pipe(gulp.dest(“./css/"))
+.pipe(notify(“Minificado CSS terminado”)) // muestra notificación
+});
+
+
+Se acabó el recargar la página al realizar cambios. BrowserSync actualiza los cambios en la web cuando algún archivo es actualizado.
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev browser-sync
+Es necesario tener instalada la dependencia browser-sync
+
+
+BrowserSync por defecto
+var gulp = require(“gulp”),
+browserSync = require(“browser-sync”).create();
+gulp.task("default", function(){
+browserSync.init({
+server: “./build" // arranca el servidor en la carpeta build });
+// forzamos la recarga de browserSync si se modifican HTML
+gulp.watch("build/*.html").on('change', browserSync.reload); });
+
+
+BrowserSync como proxy
+var gulp = require(“gulp”),
+browserSync = require(“browser-sync”).create();
+gulp.task("default", function(){
+browserSync.init({
+proxy: “127.0.0.1:8000” // actúa como proxy });
+// forzamos la recarga de browserSync si se modifican HTML
+gulp.watch("build/*.html").on('change', browserSync.reload); });
+Útil cuando trabajamos con un backend
+
+
+BrowserSync con SASS
+var gulp = require(“gulp”),
+sass = require(“gulp-ruby-sass”),
+browserSync = require(“browser-sync”).create();
+var sassDirs = [“./sass/*.scss”, “./sass/**/*.scss”]
+gulp.task(“compile-sass”, function(){
+sass(“./sass/style.scss”)
+.pipe(gulp.dest(“./css/"))
+.pipe(browserSync.stream()) // indicamos a browserSync que recargue
+});
+
+
+BrowserSync con Browserify
+var gulp = require(“gulp”),
+tap = require(“gulp-tap”),
+buffer = require(“gulp-buffer”),
+browserify = require(“browserify”),
+browserSync = require(“browser-sync”).create();
+gulp.task(“concat-js”, function(){
+gulp.src(“./js/main.js”))
+.pipe(tap(function (file) {
+file.contents = browserify(file.path, {debug: true}).bundle();
+}))
+.pipe(buffer())
+.pipe(gulp.dest(“./dest/js/“))
+.pipe(browserSync.stream()) // indicamos a browserSync que recargue
+});
+
+
+Un JavaScript para dominarlos a todos
+Permite tener nuestro código JS mantenible en diferentes archivos, pero que desde nuestra web sólo carguemos un archivo (para que la web funcione más rápido).
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-concat
+Es necesario tener instalada la dependencia gulp-concat
+
+
+Concatenando todo nuestro JS en un archivo
+var gulp = require(“gulp”),
+concat = require(“gulp-concat”);
+var jsDirs = [“./js/*.js”, “./js/**/*.js”];
+gulp.task(“concat-js”, function(){
+gulp.src(jsDirs) // carga todos los JS .pipe(concat(“all.js”)) // concatena en un archivo .pipe(gulp.dest(“./dest/js/")) // deja el archivo en su sitio
+});
+gulp.task(“default”, function(){
+// Observamos cambios en cualquier archivo JS 
+// y cuando cambie alguno, lanzamos la tarea de concatenacion gulp.watch(jsDirs, [“concat-js”]);
+});
+
+
+Browserify
+Usando paquetes npm en nuestro JavaScript.
+Browserify nos permite descargar dependencias con npm e incluirlas en nuestro código JavaScript con “require”.
+
+
+Browserify
+Instalamos jQuery con npm
+$ npm install --save jquery
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev browserify gulp-tap gulp-
+buffer
+Es necesario tener instalada la dependencia browserify, gulp-tap y gulp-buffer
+
+
+Concatenando todo nuestro JS en un archivo
+var gulp = require(“gulp”),
+tap = require(“gulp-tap”),
+buffer = require(“gulp-buffer”), browserify = require(“browserify”);
+gulp.task(“concat-js”, function(){ gulp.src(“./js/main.js”)) // carga todos los JS .pipe(tap(function (file) {
+file.contents = browserify(file.path, {debug: true}).bundle(); })) // ejecutamos browserify para cada fichero
+.pipe(buffer()) // convertimos en un buffer
+.pipe(gulp.dest(“./dest/js/")) // deja el archivo en su sitio
+});
+
+
+Postcss
+Mejora nuestro código CSS generado con SASS con autoprefijado, minificado y mucho más
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-postcss autoprefixer
+cssnano
+Es necesario tener instalada las dependencias gulp-postcss, autoprefixer y cssnano
+
+
+Autoprefijando CSS al compilar SASS
+var gulp = require(“gulp”),
+sass = require(“gulp-ruby-sass”), postcss = require(“gulp-postcss”), autoprefixer = require(“autoprefixer”);
+gulp.task(“compile-sass”, function(){
+sass(“./sass/style.scss”) // compila style.scss .pipe(postcss([autoprefixer()])) // post procesa el CSS .pipe(gulp.dest(“./css/")) // y el resultado lo dejas en /css/
+});
+
+
+Minificando CSS para producción
+var gulp = require(“gulp”),
+sass = require(“gulp-ruby-sass”), postcss = require(“gulp-postcss”), cssnano = require(“cssnano”);
+gulp.task(“cssmin”, function(){
+gulp.src(“./css/style.css”) // carga el archivo .pipe(postcss([cssnano()])) // lo minifica .pipe(gulp.dest(“./css/")) // deja el archivo en su sitio
+});
+// definimos una tarea producción que concatena y luego mitifica
+gulp.task(“production”, [“concat-js”, “uglify”, “cssmin”]);
+
+
+Uglify
+Minificando nuestro código JS para que pese menos
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-uglify
+Es necesario tener instalada la dependencia gulp-uglify
+
+
+Minificando JS para producción
+var gulp = require(“gulp”),
+uglify = require(“gulp-uglify”);
+var jsDirs = [“./dest/js/all.js”];
+gulp.task(“uglify”, function(){
+gulp.src(“./dest/js/all.js”) // carga el archivo .pipe(uglify(“./dest/js/all.js”)) // lo minifica .pipe(gulp.dest(“./dest/js/")) // deja el archivo en su sitio
+});
+// definimos una tarea producción que concatena y luego mitifica
+gulp.task(“production”, [“concat-js”, “uglify”]);
+
+
+Source maps
+El rastro de migas ideal para depurar archivos minificados.
+Los source maps permiten saber en qué linea del archivo original está fallando algo a partir de un archivo minifcado.
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-sourcemaps
+Es necesario tener instalada la dependencia gulp-sourcemaps
+
+
+Añadiendo sourcemaps a CSS minificado
+var gulp = require(“gulp”),
+sass = require(“gulp-ruby-sass”), postcss = require(“gulp-postcss”), cssnano = require(“cssnano”),
+sourcemaps = require(“gulp-sourcemaps”);
+gulp.task(“cssmin”, function(){
+gulp.src(“./css/style.css”) // carga el archivo .pipe(sourcemaps.init()) // iniciamos el rastreo .pipe(postcss([cssnano()])) // lo minifica .pipe(sourcemaps.write()) // guardamos el rastreo .pipe(gulp.dest(“./css/")) // deja el archivo en su sitio
+});
+
+
+Añadiendo sourcemaps a JS minificado
+var gulp = require(“gulp”),
+uglify = require(“gulp-uglify”), sourcemaps = require(“gulp-sourcemaps”);
+var jsDirs = [“./dest/js/all.js”];
+gulp.task(“uglify”, function(){
+gulp.src(“./dest/js/all.js”) // carga el archivo
+.pipe(sourcemaps.init()) // iniciamos el rastreo .pipe(uglify(“./dest/js/all.js”)) // lo minifica .pipe(sourcemaps.write()) // guardamos el rastreo .pipe(gulp.dest(“./dest/js/")) // deja el archivo en su sitio
+});
+
+
+Optimizando imágenes
+
+
+Optimizando imágenes
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-imagemin
+Es necesario tener instalada la dependencia gulp-imagemin
+
+
+Optimizando imágenes
+var gulp = require(“gulp”),
+imagemin = require(“gulp-imagemin”);
+var imagerDirs = [“./img/*”];
+gulp.task(“optimize-images”, function(){ gulp.src(imagerDirs)
+.pipe(imagemin()) // optimiza imágenes .pipe(gulp.dest(“./img/min/“))
+});
+gulp.task(“default”, function(){
+// Observamos cambios en cualquier imagen y lanzamos el optimizado
+gulp.watch(imagerDirs, [“optimize-images”]); });
+
+
+Imágenes responsive
+
+
+Imágenes responsive
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-responsive-images
+Es necesario tener instalada la dependencia gulp-responsive-images Hace falta tener instalado graphicsmagic:
+En OS X: brew install graphicsmagick En Linux: apt-get install graphicsmagick
+• •
+
+
+Imágenes responsive
+var gulp = require(“gulp”),
+responsive = require(“gulp-responsive-images”);
+var imagerDirs = [“./img/*”];
+gulp.task(“responsive”, function(){ gulp.src(imagerDirs) .pipe(responsive({
+'*.png': [
+{ width: 600, suffix: “large” },
+{ width: 200, suffix: “small” }
+] }))
+.pipe(gulp.dest(“./img/min/“))
+});
+
+
+Creando sprites
+
+
+Creando sprites
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp.spritesmith
+Es necesario tener instalada la dependencia gulp-spritesmith
+
+
+Optimizando imágenes
+var gulp = require(“gulp”),
+spritesmith = require(“gulp.spritesmith”);
+gulp.task(“sprite”, function(){
+var spriteData = gulp.src('src/img/*.png')
+.pipe(spritesmith({
+imgName: ‘sprite.png', // sprite destino cssName: ‘sprite.scss' // scss
+})); spriteData.img.pipe(gulp.dest('dest/img')); spriteData.css.pipe(gulp.dest(‘src/sass'));});
+});
+
+
+Minificando HTML
+Olvídate de mirar la consola: muestra notificaciones en el escritorio
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-htmlmin
+Es necesario tener instalada la dependencia gulp-htmlmin
+
+
+Minificando HTML
+var gulp = require(“gulp”),
+htmlmin = require(“gulp-htmlmin”);
+gulp.task(“minify-html”, function(){ gulp.src(“./*.html”) .pipe(htmlmin()) .pipe(gulp.dest(“./"))
+});
+
+
+PurifyCSS
+Elimina las clases CSS no utilizadas
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-purifycss
+Es necesario tener instalada la dependencia gulp-purifycss
+
+
+Purificando CSS
+var gulp = require(“gulp”),
+purify = require(“gulp-purifycss”);
+gulp.task(‘purify-css', function() {
+return gulp.src(‘./css/style.css')
+.pipe(purify(['./js/*.js', '.*.html']))
+.pipe(gulp.dest(‘./css/’));
+});
+
+
+Compass
+Usando Compass con Gulp
+
+
+Instalando dependencias
+En la carpeta de nuestro proyecto:
+$ npm install --save-dev gulp-compass
+Es necesario tener instalada la dependencia gulp-compass
+
+
+Purificando CSS
+var gulp = require(“gulp”),
+compass = require(“gulp-compass”);
+var sassDirs = [“./sass/*.scss”, “./sass/**/*.scss”]
+gulp.task(“compile-sass”, function(){ gulp.src(sassDirs)
+.pipe(compass({
+css: ‘css’,
+sass: 'sass',
+image: 'img'
+}))
+.pipe(gulp.dest(“./css/")) // y el resultado lo dejas en /css/
+});
+
