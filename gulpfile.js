@@ -6,8 +6,15 @@ var browserify = require('browserify');
 
 // source and distribution folder
 var source = 'src/',
-    dest = 'dist/';
+    dest = 'dest/';
 
+var fontAwesome = {
+    fontsTaskName: 'fontTask',
+    fonts: './node_modules/font-awesome/fonts/',
+    scssPath: './node_modules/font-awesome/scss/',
+}
+
+var bootstrapSass = { in: './node_modules/bootstrap-sass/' }
 
 // sass config esto es un objeto solo para guardar la configuración de la tarea que definiremos mas adelante bro
 var scss = { 
@@ -19,9 +26,10 @@ var scss = {
         outputStyle: 'nested',
         precison: 3,
         errLogToConsole: true,
-        //includePaths: [bootstrapSass.in + 'assets/stylesheets', fontAwesome.scssPath],
+        includePaths: [bootstrapSass.in + 'assets/stylesheets', fontAwesome.scssPath],
     }
 };
+
 
 // compile scss
 gulp.task('sass', function() {
@@ -41,10 +49,11 @@ gulp.task('sass', function() {
             message: "CSS actualizado en el navegador 🤘 bro"
         }))
         .pipe(browserSync.stream()); // Envia los cambios de CSS al navegador.
+        //.pipe(browserSync.reload({stream:true}));
 });
 
 gulp.task('default', ["sass"] , function(){
-
+    console.log("hola Simone");
 	// iniciar BrowserSync
     browserSync.init({
         // server: "./", // levanta servidor web en carpeta actual
