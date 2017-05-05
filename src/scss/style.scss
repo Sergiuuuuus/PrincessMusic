@@ -1,5 +1,6 @@
 @import "variables";
-
+@import "bootstrap-custom";
+@import "bootstrap/theme";
 
 div{
 	background-color:$sunset-orange;
@@ -7,3 +8,4 @@ div{
 		background-color:$mustard;
 	}
 }
+.asd{color:#FFF;}

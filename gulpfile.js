@@ -6,7 +6,7 @@ var browserify = require('browserify');
 
 // source and distribution folder
 var source = 'src/',
-    dest = 'dest/';
+    dest = 'dist/';
 
 var fontAwesome = {
     fontsTaskName: 'fontTask',
@@ -17,52 +17,54 @@ var fontAwesome = {
 var bootstrapSass = { in: './node_modules/bootstrap-sass/' }
 
 // sass config esto es un objeto solo para guardar la configuración de la tarea que definiremos mas adelante bro
-var scss = { 
-	in : source + 'scss/style.scss', //El punto de entrada
-    out: dest + 'css/',
-    watch: source + 'scss/**/*',
-    sourcemaps: './',
+var sassConfig = {
+    compileSassTaskName: 'compile-sass',
+    watchFiles: './src/scss/*.scss',
+    entryPoint: './src/scss/style.scss',
+    dest: './dist/css/',
     sassOpts: {
         outputStyle: 'nested',
         precison: 3,
         errLogToConsole: true,
-        includePaths: [bootstrapSass.in + 'assets/stylesheets', fontAwesome.scssPath],
+        includePaths: [bootstrapSass.in + 'assets/stylesheets', fontAwesome.scssPath]
     }
 };
 
 
-// compile scss
-gulp.task('sass', function() {
-    return gulp.src(scss.in)
-        // .pipe(sourcemaps.init()) 
-        .pipe(sass(scss.sassOpts).on('error', sass.logError)) //procesa SASS
-		//.pipe(autoprefixer())
-        // .pipe(cssnano())
-        // .pipe(sourcemaps.write(scss.sourcemaps))
-        .pipe(gulp.dest(scss.out)) //Lo guarda en el archivo 
-        .pipe(notify({
-            title: "SASS",
-            message: "Compiled 🤘 bro"
-        }))
-        .pipe(notify({
-            title: "SASS",
-            message: "CSS actualizado en el navegador 🤘 bro"
-        }))
-        .pipe(browserSync.stream()); // Envia los cambios de CSS al navegador.
-        //.pipe(browserSync.reload({stream:true}));
+// compila sass
+gulp.task(sassConfig.compileSassTaskName, function(){
+    gulp.src(sassConfig.entryPoint)    // cargo el style.scss
+    //.pipe(sourcemaps.init())    // empezamos a capturar los sourcemaps
+    .pipe(sass(sassConfig.sassOpts).on('error', function(error){ // compilamos sass
+        return notify().write(error); // si ocurre un error, mostramos notifiación
+    }))
+    //.pipe(postcss([autoprefixer(), cssnano()])) // autoprefija el css y lo minifica
+    //.pipe(sourcemaps.write('./'))   // terminamos de capturar los sourcemaps
+    .pipe(gulp.dest(sassConfig.dest))      // dejo el resultado en ./dist/
+    .pipe(browserSync.stream())     // recargamos el CSS en el navegador
+    .pipe(notify("SASS Compilado 🤘"));
 });
 
-gulp.task('default', ["sass"] , function(){
-    console.log("hola Simone");
+gulp.task('default', [sassConfig.compileSassTaskName, fontAwesome.fontsTaskName] , function(){
+    
 	// iniciar BrowserSync
     browserSync.init({
         // server: "./", // levanta servidor web en carpeta actual
         proxy: "127.0.0.1:8000", // actúa como proxy enviando las peticiones a sparrest
     });
 
-    gulp.watch(scss.watch, ["sass"]); //Inicia un observador para SASS
+    gulp.watch(sassConfig.watchFiles, [sassConfig.compileSassTaskName]); //Inicia un observador para SASS
 
 
     gulp.watch("*.html").on("change", browserSync.reload); //Inicia un observador para los HTMLS
 
 });
+
+gulp.task(fontAwesome.fontsTaskName, function() {
+    gulp.src(fontAwesome.fonts + '**/*')
+    .pipe(gulp.dest('./dist/fonts'));
+});
+
+
+
+
