@@ -42,7 +42,7 @@ gulp.task(sassConfig.compileSassTaskName, function(){
     //.pipe(sourcemaps.write('./'))   // terminamos de capturar los sourcemaps
     .pipe(gulp.dest(sassConfig.dest))      // dejo el resultado en ./dist/
     .pipe(browserSync.stream())     // recargamos el CSS en el navegador
-    .pipe(notify("SASS Compilado 🤘"));
+    .pipe(notify("SASS Compilado"));
 });
 
 gulp.task('default', [sassConfig.compileSassTaskName, fontAwesome.fontsTaskName] , function(){
